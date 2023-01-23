@@ -1,51 +1,35 @@
-# eslint-plugin-test-selectors
+# eslint-plugin-data-test
 
-[![Build Status](https://travis-ci.org/davidcalhoun/eslint-plugin-test-selectors.svg?branch=master)](https://travis-ci.org/davidcalhoun/eslint-plugin-test-selectors)
-[![Downloads][downloads-image]][npm-url]
+![Build Status](https://github.com/tandrewnichols/eslint-plugin-data-test/actions/workflows/ci/badge.svg)
 
-Enforces that a `data-test-id` attribute is present on interactive DOM elements to help with UI testing.
+Enforces that a `data-test` attribute is present on interactive DOM elements to help with UI testing.
 
 - ❌ `<button>Download</button>`
-- ✅ `<button data-test-id="download-button">Download</button>`
-
-### Example of eslint-plugin-test-selectors running in Visual Studio Code:
-
-![Example of eslint-plugin-test-selectors running in Visual Studio Code](https://github.com/davidcalhoun/eslint-plugin-test-selectors/blob/master/vscode-test-selectors-example.png)
-
-## Changelog
-
-- `2.0.0` - new `onSubmit` rule (thank you @@jzatt), upgrade to ESLint 8 and Mocha 9, fix moderate security advisory for `chalk/ansi-regex`
-- `1.3.0` - Add auto-fix capability to `onClick` (thank you @bkonuwa and @pixelbandito). ([#8](https://github.com/davidcalhoun/eslint-plugin-test-selectors/pull/8))
-- `1.1.0`
-  - elements with `disabled` and `readonly` attributes are now ignored by default. See [Custom Rules Options](#custom-rule-options) to customize this behavior. (fixes [#3][i3])
-  - `plugin:test-selectors/recommended` now emits warnings by default instead of errors. For the old stricter behavior which emits errors, folks can use `plugin:test-selectors/recommendedWithErrors` (fixes [#4][i4])
-  - Refactoring and cleanup. Readme improvements.
-- `1.0.1` - fix bug with inline functions (fixes [#1][i1])
-- `1.0.0` - initial release
+- ✅ `<button data-test="download-button">Download</button>`
 
 ## Installation
 
-You'll first need to install [ESLint](http://eslint.org), which requires [Node.js](https://nodejs.org) (note that `eslint-plugin-test-selectors` requires Node.js 10+):
+You'll first need to install [ESLint](http://eslint.org), which requires [Node.js](https://nodejs.org). Note that `eslint-plugin-data-test` requires a version of node that supports object spread syntax (>= 5.12.0, but hopefully, no one is using v5 at this point).
 
 ```
 $ npm i eslint --save-dev
 ```
 
-Next, install `eslint-plugin-test-selectors`:
+Next, install `eslint-plugin-data-test`:
 
 ```
-$ npm install eslint-plugin-test-selectors --save-dev
+$ npm install eslint-plugin-data-test --save-dev
 ```
 
-**Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `eslint-plugin-test-selectors` globally.
+**Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `eslint-plugin-data-test` globally.
 
 ## Usage
 
-Add `test-selectors` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
+Add `data-test` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
 
 ```json
 {
-  "plugins": ["test-selectors"]
+  "plugins": ["data-test"]
 }
 ```
 
@@ -53,18 +37,18 @@ If you want to use all the recommended default rules, you can simply add this li
 
 ```json
 {
-  "extends": ["plugin:test-selectors/recommended"]
+  "extends": ["plugin:data-test/recommended"]
 }
 ```
 
-By default, this will run all [Supported Rules](#supported-rules) and emit eslint warnings. If you want to be more strict, you can emit eslint errors by instead using `plugin:test-selectors/recommendedWithErrors`.
+By default, this will run all [Supported Rules](#supported-rules) and emit eslint errors.
 
-Another option: you can also selectively enable and disable individual rules in the `rules` section of your `.eslintrc` configuration. For instance, if you only want to enable the `test-selectors/button` rule, skip the `extends` addition above and simply add the following to the `rules` section of your `.eslintrc` configuration:
+Another option: you can also selectively enable and disable individual rules in the `rules` section of your `.eslintrc` configuration. For instance, if you only want to enable the `data-test/button` rule, skip the `extends` addition above and simply add the following to the `rules` section of your `.eslintrc` configuration:
 
 ```json
 {
   "rules": {
-    "test-selectors/button": ["warn", "always"]
+    "data-test/button": ["warn", "always"]
   }
 }
 ```
@@ -74,7 +58,7 @@ If you like most of the recommended rules by adding the `extends` option above, 
 ```json
 {
   "rules": {
-    "test-selectors/anchor": "off"
+    "data-test/anchor": "off"
   }
 }
 ```
@@ -85,68 +69,65 @@ Note: see [Supported Rules](#supported-rules) below for a full list.
 
 All tests can be customized individually by passing an object with one or more of the following properties.
 
-### testAttribute
+### domAttribute
 
-The default test attribute expected is `data-test-id`, but you can override it with whatever you like. Here is how you would use `data-some-custom-attribute` instead:
+The default test attribute expected is `data-test` for raw dom nodes, but you can override it with whatever you like. Here is how you would use `data-test-id` instead:
 
 ```json
 {
   "rules": {
-    "test-selectors/onChange": [
-      "warn",
+    "data-test/onChange": [
+      "error",
       "always",
-      { "testAttribute": "data-some-custom-attribute" }
+      { "domAttribute": "data-test-id" }
     ]
   }
 }
 ```
 
-### ignoreDisabled
+### componentAttribute
 
-By default all elements with the `disabled` attribute are ignored, e.g. `<input disabled />`. If you don't want to ignore this attribute, set `ignoreDisabled` to `false`:
-
-```json
-{
-  "rules": {
-    "test-selectors/onChange": ["warn", "always", { "ignoreDisabled": false }]
-  }
-}
-```
-
-### ignoreReadonly
-
-By default all elements with the `readonly` attribute are ignored, e.g. `<input readonly />`. If you don't want to ignore this attribute, set `ignoreReadonly` to `false`:
+Since `data-test` is not a valid javascript variable name, handling this value at the component level can be a nuisance, so you can speficy a _separate_ attribute name for components that pass a `data-test` down to an underlying dom node. Note that this is mutually exclusive with `domAttribute` since you can't render a node that is both a dom node and a component at the same time, nor would you typically apply both attributes to the same node. The default value for this is `dataTest`, but as with `domAttribute`, you can customize it to whatever you want. For example:
 
 ```json
 {
   "rules": {
-    "test-selectors/onChange": ["warn", "always", { "ignoreReadonly": false }]
+    "data-test/onChange": [
+      "error",
+      "always",
+      { "componentAttribute": "dataTestId" }
+    ]
   }
 }
 ```
 
-### htmlOnly
+Note that this property can only be set on the handler rules (onClick, onChange, etc.) and not on the element rules (button, anchor, etc.) since those rules only apply to dom elements already.
 
-Only supported on `button` rule, this option will exempt React components called Button from the rule.
+### readonly
+
+By default all inputs with the `readonly` attribute are ignored, e.g. `<input readonly />`. If you don't want to ignore this attribute, set `readonly` to `true`:
 
 ```json
 {
   "rules": {
-    "test-selectors/button": ["warn", "always", { "htmlOnly": true }]
+    "data-test/input": ["error", "always", { "readonly": true }]
   }
 }
 ```
+
+This property is only valid on inputs (since `readonly` is only valid on inputs).
 
 ## Supported Rules
 
-- `test-selectors/anchor`
-- `test-selectors/button`
-- `test-selectors/input`
-- `test-selectors/onChange`
-- `test-selectors/onClick`
-- `test-selectors/onKeyDown`
-- `test-selectors/onKeyUp`
-- `test-selectors/onSubmit`
+- `data-test/anchor`
+- `data-test/button`
+- `data-test/input`
+- `data-test/onChange`
+- `data-test/onClick`
+- `data-test/onKeyDown`
+- `data-test/onKeyUp`
+- `data-test/onSubmit`
+- `data-test/Link`
 
 ## Further Reading
 
@@ -157,11 +138,3 @@ Why `data` attributes and not `id` or `class`? Check out some of the following:
 - [Decoupling CSS Selectors From Your Tests](https://mixandgo.com/learn/decoupling-css-selectors-from-your-tests)
 - [Test your DOM with Data Attributes](https://medium.com/@colecodes/test-your-dom-with-data-attributes-44fccc43ed4b)
 - [Something Better than IDs for Identifying Elements in Selenium Tests](https://techblog.constantcontact.com/software-development/a-better-way-to-id-elements-in-selenium-tests/)
-
-[downloads-image]: https://img.shields.io/npm/dm/eslint-plugin-test-selectors.svg?style=flat-square
-[npm-url]: https://www.npmjs.com/package/eslint-plugin-test-selectors
-[npm-image]: https://img.shields.io/npm/dm/eslint-plugin-test-selectors.svg?style=flat
-[i1]: https://github.com/davidcalhoun/eslint-plugin-test-selectors/issues/1
-[i2]: https://github.com/davidcalhoun/eslint-plugin-test-selectors/issues/2
-[i3]: https://github.com/davidcalhoun/eslint-plugin-test-selectors/issues/3
-[i4]: https://github.com/davidcalhoun/eslint-plugin-test-selectors/issues/4
