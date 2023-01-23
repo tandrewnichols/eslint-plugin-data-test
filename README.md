@@ -103,6 +103,16 @@ Since `data-test` is not a valid javascript variable name, handling this value a
 
 Note that this property can only be set on the handler rules (onClick, onChange, etc.) and not on the element rules (button, anchor, etc.) since those rules only apply to dom elements already.
 
+### What do I do about third party stuff?
+
+You might have a conundrum where you're using a third party component that takes an `onClick` or other handler. Since you don't own the implementation, passing `dataTest` (which they won't be looking for, and if you use typescript, the compiler will likely yell at you), won't work, but if you try to do this:
+
+```js
+<Component onClick={handler} data-test="foo" />
+```
+
+This linter will yell at you. There might be ways to handle this in the future, but just like this linter doesn't handle custom event handlers (e.g. onSetName), it's simpler not to handle this (hopefully) edge case. You can work around this by passing `data-test` and using `/* eslint-ignore-next-line data-test/<rule> */` for the time being.
+
 ### readonly
 
 By default all inputs with the `readonly` attribute are ignored, e.g. `<input readonly />`. If you don't want to ignore this attribute, set `readonly` to `true`:
