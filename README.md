@@ -119,15 +119,15 @@ This property is only valid on inputs (since `readonly` is only valid on inputs)
 
 ## Supported Rules
 
-- `data-test/anchor`
-- `data-test/button`
-- `data-test/input`
-- `data-test/onChange`
-- `data-test/onClick`
-- `data-test/onKeyDown`
-- `data-test/onKeyUp`
-- `data-test/onSubmit`
-- `data-test/Link`
+- [data-test/anchor](./docs/rules/anchor)
+- [data-test/button](./docs/rules/button)
+- [data-test/input](./docs/rules/input)
+- [data-test/onChange](./docs/rules/onChange)
+- [data-test/onClick](./docs/rules/onClick)
+- [data-test/onKeyDown](./docs/rules/onKeyDown)
+- [data-test/onKeyUp](./docs/rules/onKeyUp)
+- [data-test/onSubmit](./docs/rules/onSubmit)
+- [data-test/Link](./docs/rules/Link)
 
 ## Further Reading
 
