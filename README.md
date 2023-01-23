@@ -1,6 +1,6 @@
 # eslint-plugin-data-test
 
-![Build Status](https://github.com/tandrewnichols/eslint-plugin-data-test/actions/workflows/ci/badge.svg)
+![Build Status](https://github.com/tandrewnichols/eslint-plugin-data-test/actions/workflows/ci.yml/badge.svg)
 
 Enforces that a `data-test` attribute is present on interactive DOM elements to help with UI testing.
 
