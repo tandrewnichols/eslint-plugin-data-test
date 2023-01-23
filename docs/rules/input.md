@@ -1,4 +1,4 @@
-# Requires the `data-test-id` attribute on <input> elements.
+# Requires the `data-test` attribute on <input> elements.
 
 ## Rule Details
 
@@ -11,6 +11,7 @@ Examples of **incorrect** code for this rule:
 Examples of **correct** code for this rule:
 
 ```html
-<input type="text" data-test-id="name" />
+<input type="text" data-test="name" />
+<input type="text" readonly />
 ```
 

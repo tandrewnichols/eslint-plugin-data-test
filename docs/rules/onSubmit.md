@@ -1,4 +1,4 @@
-# Requires the `data-test-id` attribute on elements with the `onSubmit` attribute.
+# Requires the `data-test` attribute on elements with the `onSubmit` attribute.
 
 ## Rule Details
 
@@ -11,6 +11,6 @@ Examples of **incorrect** code for this rule:
 Examples of **correct** code for this rule:
 
 ```js
-<Foo onSubmit={ this.handleSubmit } data-test-id="name-selector" />
+<Foo onSubmit={ this.handleSubmit } dataTest="name-selector" />
 ```
 
