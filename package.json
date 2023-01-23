@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-data-test",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Enforce data-test attributes on interactive DOM elements and React components",
   "homepage": "https://github.com/tandrewnichols/eslint-plugin-data-test#readme",
   "keywords": [
