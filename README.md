@@ -67,7 +67,7 @@ Note: see [Supported Rules](#supported-rules) below for a full list.
 
 ## Custom rule options
 
-All tests can be customized individually by passing an object with one or more of the following properties.
+All test attributes can be customized individually by passing an object with one or more of the following properties.
 
 ### domAttribute
 
@@ -103,16 +103,6 @@ Since `data-test` is not a valid javascript variable name, handling this value a
 
 Note that this property can only be set on the handler rules (onClick, onChange, etc.) and not on the element rules (button, anchor, etc.) since those rules only apply to dom elements already.
 
-### What do I do about third party stuff?
-
-You might have a conundrum where you're using a third party component that takes an `onClick` or other handler. Since you don't own the implementation, passing `dataTest` (which they won't be looking for, and if you use typescript, the compiler will likely yell at you), won't work, but if you try to do this:
-
-```js
-<Component onClick={handler} data-test="foo" />
-```
-
-This linter will yell at you. There might be ways to handle this in the future, but just like this linter doesn't handle custom event handlers (e.g. onSetName), it's simpler not to handle this (hopefully) edge case. You can work around this by passing `data-test` and using `/* eslint-ignore-next-line data-test/<rule> */` for the time being.
-
 ### readonly
 
 By default all inputs with the `readonly` attribute are ignored, e.g. `<input readonly />`. If you don't want to ignore this attribute, set `readonly` to `true`:
@@ -126,6 +116,40 @@ By default all inputs with the `readonly` attribute are ignored, e.g. `<input re
 ```
 
 This property is only valid on inputs (since `readonly` is only valid on inputs).
+
+### Ignore
+
+Sometimes when working with third parties or in cases where you're abstracting the data-test attribute into the component definition entirely, you will want to ignore certain kinds of elements and components. You can do this with the `ignore` parameter:
+
+```json
+{
+  "rules": {
+    "data-test/onChange": [
+      "error",
+      "always",
+      { "ignore": "MyComponent" }
+    ]
+  }
+}
+```
+
+In thie case, any uses of MyComponent will not be tested for data-test properties.
+
+### Ignore Pattern
+
+Similar, if you have a whole set of components that match a pattern that you want to ignore, you can provide one or more string regex patterns:
+
+```json
+{
+  "rules": {
+    "data-test/onChange": [
+      "error",
+      "always",
+      { "ignorePattern": ".*Component" }
+    ]
+  }
+}
+```
 
 ## Supported Rules
 
